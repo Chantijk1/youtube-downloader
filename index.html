@@ -1,0 +1,112 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            padding: 8px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        .output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Video Downloader</h1>
+    <label for="url">Enter YouTube URL:</label>
+    <input type="text" id="url" placeholder="Enter YouTube video URL" required>
+    <button onclick="downloadVideo()">Download</button>
+
+    <div class="output" id="output"></div>
+
+    <script>
+        async function downloadVideo() {
+            const url = document.getElementById("url").value;
+            if (!url) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+
+            try {
+                // Call the backend API to download the video
+                const response = await fetch("http://127.0.0.1:8000/download_video/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (data.file) {
+                    // Show the download link for the user
+                    document.getElementById("output").innerHTML = `
+                        <p>Video downloaded! <a href="http://127.0.0.1:8000/download/${data.file}" download>Click here to download the video</a></p>
+                    `;
+                } else {
+                    document.getElementById("output").innerText = "Failed to download the video.";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("output").innerText = "Error downloading video.";
+            }
+        }
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+</head>
+<body>
+    <h1>YouTube Video Downloader</h1>
+    <input type="text" id="videoUrl" placeholder="Enter YouTube video URL">
+    <button onclick="downloadVideo()">Download Video</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function downloadVideo() {
+            const url = document.getElementById('videoUrl').value;
+            const response = await fetch('http://localhost:8000/download_video/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                alert('Error: ' + data.detail);
+                return;
+            }
+
+            const data = await response.json();
+            const filename = data.file;
+
+            // Provide link to download the video
+            document.getElementById('result').innerHTML = `
+                <p>Download completed. Click <a href="http://localhost:8000/download/${filename}" target="_blank">here</a> to download the video.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
+
